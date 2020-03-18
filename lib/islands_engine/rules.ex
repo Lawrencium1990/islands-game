@@ -7,27 +7,23 @@ defmodule IslandsEngine.Rules do
 
   def new, do: %Rules{}
 
-  def check(%Rules{state: initialized} = rules, :add_player), do:
+  def check(%Rules{state: _initialized} = rules, :add_player), do:
     {:ok, %Rules{rules | state: :players_set}}
 
   def check(%Rules{state: :players_set} = rules, {:position_islands, player}) do
-    {:ok, rules}
-  end
-
-  def check(%Rules{state: :players_set}  =rules, {:position_islands, player}) do
-    case Map.fetch?(rules, player) do
+    case Map.fetch!(rules, player) do
       :islands_set -> :error
       :island_not_set -> {:ok, rules}
     end
   end
 
   def check(%Rules{state: :players_set} = rules, {:set_island, player}) do
-    rules = Map.put(rules, player, :islands_set)
+    _rules = Map.put(rules, player, :islands_set)
   end
 
   def check(%Rules{state: :players_set} = rules, {:set_islands, player}) do
     rules = Map.put(rules, player, :islands_set)
-    case both_players_islands_set(rules) do
+    case both_players_islands_set?(rules) do
       true ->{:ok, %Rules{rules | state: :player1_turn}}
       false -> {:ok, rules}
 
@@ -52,7 +48,7 @@ defmodule IslandsEngine.Rules do
   def check(%Rules{state: :player2_turn} = rules, {:win_check, win_or_not}) do
     case win_or_not do
       :win -> {:ok, %Rules{rules | state: :game_over}}
-      :not_win .> {:ok, rules}
+      :not_win -> {:ok, rules}
     end
   end
 

@@ -5,7 +5,7 @@ defmodule IslandsEngine.Game do
 
   def init(name) do
     player1 = %{name: name, board: Board.new(), guesses: Guesses.new()}
-    player2 = %{name. nil, board: Board.new(), guesses: Guesses.new()}
+    player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
     {:ok, %{player1: player1, player2: player2, rules: %Rules{}}}
   end
 
@@ -22,9 +22,8 @@ defmodule IslandsEngine.Game do
     {:reply, state, state}
   end
 
-  def handle_call({:add_player, name}, _from, state,data) do
-    with
-      {:ok, rules} <- Rules.check(state_data.rules, :add_player)
+  def handle_call({:add_player, name}, _from, state_data) do
+    with {:ok, rules} <- Rules.check(state_data.rules, :add_player)
     do
       state_data
       |> update_player2_name(name)
